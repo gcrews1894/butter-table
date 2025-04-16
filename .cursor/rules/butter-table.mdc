@@ -1,0 +1,285 @@
+---
+description: 
+globs: 
+alwaysApply: true
+---
+---
+description: >
+  Butter‑Table global project rules and conventions.
+  Always include this rule so the AI follows our architecture,
+  coding standards, accessibility targets, and performance goals.
+alwaysApply: true
+---
+
+# 🧈 Butter‑Table Project Rules
+
+These instructions apply to **every file** in the Butter‑Table monorepo.  
+Follow them when creating, editing, or refactoring code, docs, or tests.
+
+---
+
+## 1. Repository & Package Layout
+
+```
+/packages
+  /butter-core        ⟶ Headless state + data‑model (no React)
+  /butter-virtual     ⟶ Thin wrapper around TanStack Virtual
+  /butter-ui          ⟶ React 18 components that wrap core hooks
+  /butter-theme-default
+  /butter-theme-material
+  /butter-theme-plaincss
+/.cursor/rules        ⟶ Project rule files (this file lives here)
+/examples/            ⟶ Example implementations
+/docs/                ⟶ Documentation site
+/tests/               ⟶ Shared test utilities
+```
+
+* **Core** must remain **framework‑agnostic** (pure TypeScript).  
+* **UI** is the only package that imports `react` or `react-dom`.  
+* Theme packages expose **CSS variables** or **styled‑components**; never ship inline styles in core.
+
+---
+
+## 2. Language & Tooling
+
+| Tool            | Version / Setting                         |
+| --------------- | ----------------------------------------- |
+| TypeScript      | `strict: true`, target `ES2022`, module `ESNext` |
+| React           | `^18` with automatic JSX runtime          |
+| Bundler         | Vite (dev) / Rollup via **tsup** (build)  |
+| Lint / Format   | ESLint (Airbnb + React) + Prettier        |
+| Tests           | Vitest + React Testing Library            |
+| CI              | GitHub Actions: `lint`, `type‑check`, `test`, `bundle‑size` |
+
+---
+
+## 3. Core Principles
+
+1. **"One‑liner to production, zero‑liner to customize."** All features should have sensible defaults and be fully override‑able.
+2. **Performance first.** Virtualization is baked‑in with minimal re‑renders and tree‑shakable modules.
+3. **Design‑system agnostic.** Neutral base styles with optional theme packs.
+4. **All features OSS.** No functional paywalls; optional sponsorship tiers only for priority support.
+5. **Modern React.** Uses Hooks, Context, and is Suspense‑friendly and SSR/React Server Components safe.
+
+---
+
+## 4. Coding Conventions
+
+1. **No default exports** – use named exports only.  
+2. **Components** ⇒ `PascalCase.tsx`; **hooks/utils** ⇒ `camelCase.ts`.  
+3. Keep public generics ergonomic:
+
+   ```ts
+   export function createTable<TData extends object = AnyData>(opts: TableOptions<TData>): TableInstance<TData> { … }
+   ```
+
+4. Prefix hooks with `use`, return tuples/objects not arrays of length > 2.  
+5. Prefer **functional updates** (`setState(p => …)`) to mutable ops.  
+6. All async work uses **AbortController** for cancellation.  
+7. Include **JSDoc** for every public API; use `@example` blocks.  
+8. **Accessibility first**: add ARIA roles/labels; ensure keyboard nav.  
+9. **Performance**: virtualize rows/cols by default; debounce expensive ops; memoize derived state with `useMemo` or selectors.
+
+### Component Structure
+
+Components should be organized as follows:
+1. Props interface/type definition
+2. Default props
+3. Component function
+4. Styled components (if applicable)
+5. Export statement
+
+```tsx
+// Example component structure
+import { forwardRef } from 'react';
+import type { TableProps } from './types';
+
+export const Table = forwardRef<HTMLTableElement, TableProps>(
+  ({ data, columns, className, ...rest }, ref) => {
+    // implementation...
+    return (
+      // JSX...
+    );
+  }
+);
+```
+
+---
+
+## 5. Commit Messages
+
+Use **Conventional Commits**:
+
+```
+feat(core): add tree‑data grouping API
+fix(ui): correct aria‑sort attribute on multi‑sort
+docs(theme): add theming guide to README
+```
+
+---
+
+## 6. Testing Standards
+
+* **Core** logic → pure unit tests (Vitest).  
+* **UI** → RTL component tests; verify keyboard & screen‑reader flows.  
+* **Performance** → `packages/perf-bench` with 100k rows, must scroll at 60 FPS.  
+* Never skip (`it.skip`) tests in `main`.
+
+## Testing Requirements
+
+* Unit tests for all hooks and utility functions
+* Component tests for all UI components
+* Visual regression tests for theme implementations
+* Performance benchmarks for virtualization (must scroll 100k rows at 60 FPS)
+* Accessibility tests for all interactive elements
+
+---
+
+## 7. Documentation
+
+* Storybook (or Ladle) stories live beside components: `Component.stories.tsx`.  
+* Keep API tables in markdown synced with `scripts/gen‑api‑docs.ts`.  
+* Each new feature requires a demo in `apps/demo`.
+* All public APIs must be documented with JSDoc comments
+* Include usage examples for all major features
+* Document TypeScript interfaces and type definitions
+* Provide migration guides for version updates
+
+---
+
+## 8. Responsive & Mobile Rules
+
+* On viewports `< 600 px` auto‑switch to **"stacked‑card"** layout.  
+* Horizontal scrolling is fallback only; avoid fixed px widths.  
+* Touch targets ≥ 44 px.
+
+---
+
+## 9. Accessibility Requirements
+
+* All components must meet WCAG 2.1 AA standards
+* Support keyboard navigation
+* Include proper ARIA attributes
+* Lighthouse a11y score **≥ 90** out‑of‑box
+* Ensure color contrast meets accessibility standards
+* Test with screen readers
+
+---
+
+## 10. Forbidden Patterns
+
+* **No inline styles** in core/ui; use className or styled‑components.  
+* **No lodash** – use native methods or tiny util functions.  
+* **No React class components**.  
+* Avoid third‑party state managers (Redux, Zustand) inside packages.
+
+---
+
+## 11. Package-Specific Guidelines
+
+### butter-core
+
+* Keep the core package as lightweight as possible
+* Use a state machine approach for managing table state
+* Expose hooks for all major table functionalities
+* Implement proper TypeScript generics for type safety
+* Must be framework-agnostic (pure TypeScript)
+
+### butter-virtual
+
+* Wrap virtualization logic in custom hooks
+* Support both fixed and dynamic row heights
+* Optimize scroll performance with windowing techniques
+* Support horizontal and vertical virtualization
+
+### butter-ui
+
+* Create primitive components that are highly composable
+* Support WAI-ARIA attributes for accessibility
+* Implement proper keyboard navigation
+* Provide sensible default styling
+* Only package that should import React
+
+### butter-theme-*
+
+* Use CSS variables for theming when possible
+* Support both light and dark mode
+* Provide a consistent API across different theme implementations
+* Include responsive design considerations
+
+---
+
+## 12. Example Skeletons
+
+### `packages/butter-core/src/createTable.ts`
+```ts
+/** Core factory – headless, no React */
+import { createStateMachine } from './stateMachine';
+
+export function createTable<TData extends object>(
+  options: CoreOptions<TData>,
+): CoreInstance<TData> {
+  // 1. Build column + row models
+  // 2. Attach plugins (sorting, filtering, grouping)
+  // 3. Return immutable API surface
+}
+```
+
+### `packages/butter-ui/src/Table.tsx`
+```tsx
+import { forwardRef } from 'react';
+import { useVirtualTable } from '@butter-table/butter-virtual';
+import { TableRootProps } from './types';
+
+export const TableRoot = forwardRef<HTMLTableElement, TableRootProps>(
+  ({ instance, className, style, ...rest }, ref) => {
+    const { rows, virtualizer } = useVirtualTable(instance);
+    return (
+      <table
+        ref={ref}
+        role="grid"
+        aria-rowcount={instance.getTotalRowCount()}
+        className={cn('bt-table', className)}
+        style={style}
+        {...rest}
+      >
+        {/* header + body rendered here */}
+      </table>
+    );
+  },
+);
+```
+
+---
+
+## 13. Pull Request Process
+
+1. Ensure all tests pass
+2. Update documentation if necessary
+3. Add or update examples if applicable
+4. Ensure bundle size impact is minimal
+5. Request review from at least one maintainer
+
+---
+
+## 14. Release Process
+
+* Semantic versioning (MAJOR.MINOR.PATCH)
+* Generate changelogs automatically from commit messages
+* Create GitHub releases with detailed release notes
+* Publish packages to npm with proper tags
+
+---
+
+## 15. How to Ask the AI for Help
+
+When you need code generation:
+
+* **Specify** package (`core`, `ui`, or `theme`) in your prompt.  
+* Mention whether output targets **TypeScript**, **React TSX**, or **docs**.  
+* Reference these rules with `@butter-table-project` if necessary.
+
+---
+
+Happy coding! Remember: **keep it smooth, keep it buttery 🧈.**
+

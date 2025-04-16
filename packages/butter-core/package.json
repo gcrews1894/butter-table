@@ -1,0 +1,28 @@
+{
+  "name": "@butter-table/butter-core",
+  "version": "0.1.0",
+  "description": "Headless state management and data model for Butter-Table",
+  "main": "dist/index.js",
+  "module": "dist/index.mjs",
+  "types": "dist/index.d.ts",
+  "files": [
+    "dist"
+  ],
+  "scripts": {
+    "lint": "eslint src --ext .ts,.tsx",
+    "test": "vitest run",
+    "test:watch": "vitest",
+    "clean": "rimraf dist"
+  },
+  "devDependencies": {
+    "@types/node": "^20.11.19",
+    "@types/react": "^18.2.55",
+    "eslint": "^8.56.0",
+    "rimraf": "^5.0.5",
+    "typescript": "^5.3.3",
+    "vitest": "^1.2.2"
+  },
+  "publishConfig": {
+    "access": "public"
+  }
+} 

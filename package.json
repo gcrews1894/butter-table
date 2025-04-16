@@ -1,0 +1,23 @@
+{
+  "name": "butter-table",
+  "version": "0.1.0",
+  "private": true,
+  "workspaces": [
+    "packages/*"
+  ],
+  "scripts": {
+    "build": "npm run build:types && npm run build:bundle",
+    "build:types": "tsc -p packages/butter-core/tsconfig.json && tsc -p packages/butter-virtual/tsconfig.json && tsc -p packages/butter-ui/tsconfig.json",
+    "build:bundle": "node build.js",
+    "clean": "rimraf packages/*/dist"
+  },
+  "devDependencies": {
+    "esbuild": "^0.20.1",
+    "rimraf": "^5.0.5",
+    "typescript": "^5.3.3"
+  },
+  "engines": {
+    "node": ">=18.0.0"
+  },
+  "packageManager": "npm@10.2.4"
+} 

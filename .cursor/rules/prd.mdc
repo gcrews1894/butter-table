@@ -1,0 +1,169 @@
+---
+description: 
+globs: 
+alwaysApply: true
+---
+**Butter‑Table – Product Requirements Document (PRD)**  
+*Version 0.9 — April 15 2025*
+
+---
+
+## 1. Purpose & Vision
+Butter‑Table is a **React table library that is effortless for beginners yet limitless for power users**. It delivers a fully‑styled, production‑ready data‑grid in one import, while exposing a headless core and plug‑in system for deep customization. Butter‑Table aims to “spread smoothly” into any codebase—small bundle, modern React patterns, first‑class performance, and no paywalls.
+
+---
+
+## 2. Problem Statement
+Current React table solutions fall into two camps:
+
+| Camp | Pain Points |
+| --- | --- |
+| **Headless / ultra‑flexible** (e.g., TanStack Table) | Steep learning curve, no UI out‑of‑the‑box, DIY virtualization |
+| **Batteries‑included** (e.g., MUI DataGrid, AG Grid) | Heavy bundles, license gates, rigid styling, SSR issues |
+
+Developers—especially newer ones—want:
+
+* **Time‑to‑first‑table < 10 minutes**
+* **High performance** on 100 k+ rows without extra wiring
+* **Theme‑agnostic styling** that can match any design system
+* **100 % OSS feature parity** (no “upgrade to Pro” blockers)
+* **Clear docs & TypeScript ergonomics**
+
+---
+
+## 3. Goals & Success Metrics
+| Goal | Metric / Target |
+| --- | --- |
+| 🏁 **Fast onboarding** | “Hello World” table in README takes **≤ 20 lines / ≤ 5 min** |
+| 📦 **Lightweight** | Core (logic + virtualization) **≤ 40 KB gzipped** |
+| ⚡ **Large‑data performance** | 60 FPS scroll on **100 000 rows / 50 columns** in Chrome/Edge |
+| ♿ **Accessibility** | Lighthouse a11y score **≥ 90** out‑of‑box |
+| 📱 **Responsive UX** | Mobile “card/stack” mode auto‑enabled under 600 px |
+| 🧑‍💻 **DX satisfaction** | Post‑launch survey: **80 %+ devs rate DX ≥ 8/10** |
+| 🌱 **Community adoption** | 5 000 GitHub ⭐ within 12 months; 1 000 weekly npm DLs in 6 months |
+
+---
+
+## 4. Personas & Use Cases
+1. **Nina (New Dev)** – Bootcamp grad building an admin dashboard. Needs sortable, paginated table today.
+2. **Paul (Power Dev)** – Senior engineer at SaaS company. Wants to plug custom cell renderers, server‑side pagination, and theming that matches their in‑house design system.
+3. **Maya (Product Manager)** – Cares about feature completeness (CSV export, column pinning) without negotiating licenses.
+
+---
+
+## 5. Core Principles
+1. **“One‑liner to production, zero‑liner to customize.”** Sensible defaults; every surface override‑able.
+2. **Performance first.** Virtualization baked‑in; minimal re‑renders; tree‑shakable modules.
+3. **Design‑system agnostic.** Neutral base styles + optional theme packs (Material, Ant, Bootstrap).
+4. **All features OSS.** No functional paywalls; optional sponsorship tiers only for priority support.
+5. **Modern React.** Hooks, Context, Suspense‑friendly, SSR/React Server Components safe.
+
+---
+
+## 6. Feature Requirements
+
+### 6.1 MVP (v 1.0)
+| Category | Requirement |
+| --- | --- |
+| Data Display | Column definitions via `columns` prop; row data via `data` prop |
+| Sorting & Filtering | Single & multi‑column; text, number, date operators |
+| Pagination | Client‑side page & page‑size controls |
+| Virtualization | Row & column virtualization auto‑enabled |
+| Selection | Checkbox & click row select; exposes selection state hook |
+| Column Resize/Reorder | Drag to resize; drag to reorder |
+| Themes | **Butter‑Default** (neutral), **Butter‑Material** (CSS‑in‑JS), **Butter‑PlainCSS** |
+| Accessibility | ARIA roles, keyboard nav (Tab, Arrow, Space, Enter), screen‑reader labels |
+| Responsive Modes | Auto horizontal scroll; optional “stacked cards” on small screens |
+| TypeScript | Fully typed generics; inference for `data` shape |
+| Docs & Examples | Docs site with live CodeSandbox; recipes: basic, server data, custom cells |
+| CI/CD | GitHub Actions: lint, type‑check, unit + perf tests, bundle‑size check |
+| License | MIT |
+
+### 6.2 Post‑MVP (v 1.1 → v 1.3)
+* **Server‑side Mode** – Hooks for remote pagination, sort, filter
+* **Tree & Group Rows** – Expand/collapse hierarchy, aggregation rows
+* **Inline Cell Editing** – Built‑in editors (text, select, date)
+* **Column Pinning & Visibility Toggle**
+* **Export** – CSV & Excel export (web‑worker to avoid UI block)
+* **Plugin API** – Register custom toolbar buttons, cell types
+* **RTL & i18n**
+
+---
+
+## 7. Technical Architecture
+
+```
+┌───────────────────┐
+│  butter-core      │  ← Headless hooks & state machine
+├───────────────────┤
+│  butter-virtual   │  ← Thin wrapper around TanStack Virtual
+├───────────────────┤
+│  butter-ui        │  ← Primitive components (Table, Row, Cell…)
+├───────────────────┤
+│  butter-theme-*   │  ← CSS vars / styled-components / emotion packs
+└───────────────────┘
+```
+
+* **State Machine:** XState‑inspired reducer managing columns, rows, viewport.  
+* **Rendering:** React 18 concurrent‑safe; `useSyncExternalStore` for minimal diffing.  
+* **SSR:** Core renders skeletal markup; hydration attaches virtualization on client.  
+* **Bundling:** Build with Vite + Rollup; each sub‑package individually importable.  
+* **Testing:** Vitest + React Testing Library; playwright for a11y & perf smoke tests.
+
+---
+
+## 8. Non‑Functional Requirements
+| Aspect | Spec |
+| --- | --- |
+| Performance | Initial render < 150 ms (10 k rows), scroll jank < 16 ms frame |
+| Security | No eval; sanitized props; supply chain scanning (Snyk) |
+| Browser Support | Evergreen (Chrome ≥ 110, Edge ≥ 110, Firefox ≥ 110, Safari ≥ 16) |
+| Accessibility | WCAG 2.1 AA |
+| Internationalization | Unicode / RTL ready; locale props for numbers & dates |
+| Documentation | Versioned site, dark‑mode, search, code snippets in TS & JS |
+
+---
+
+## 9. Milestones & Timeline
+| Phase | Duration | Deliverables |
+| --- | --- | --- |
+| **0.1 Prototype** | 3 wks | Core hook + minimal UI; virtualization proof‑of‑concept |
+| **0.2 Alpha** | 4 wks | Sorting, pagination, default theme, docs skeleton |
+| **0.3 Beta** | 4 wks | Filtering, selection, resizing, accessibility audit |
+| **1.0 Stable** | 2 wks harden | Docs v1, API freeze, blog launch, npm release |
+| **1.1+** | Continuous | Server‑side mode, plugins, export, tree data |
+
+---
+
+## 10. Risks & Mitigations
+| Risk | Likelihood | Impact | Mitigation |
+| --- | --- | --- | --- |
+| Scope creep vs. bundle size | Med | High | Strict module boundaries; tree‑shaking tests |
+| Competing libraries release similar “easy + headless” approach | Med | Med | Focus on DX polish & performance benchmarks; marketing |
+| Maintenance bandwidth | Med | High | Recruit OSS contributors early; sponsorship tier for sustainability |
+| Virtualization edge cases (dynamic row height) | Low | Med | Provide fallback “fixed height” mode; doc caveats |
+
+---
+
+## 11. Success Criteria (12 Months Post‑Launch)
+* **Community** – 5 k ⭐, 10 core contributors, active Discord
+* **Adoption** – Featured in Awesome‑React, used by ≥ 3 notable OSS projects
+* **Stability** – < 0.5 % open bug/issue rate per downloads
+* **Performance** – Benchmarks outperform MUI DataGrid free on 50 k row scroll
+
+---
+
+## 12. Appendix
+* Competitive analysis summary (see earlier research)
+* Naming rationale: *Butter‑Table spreads smoothly, never sticks.*
+* License: MIT + optional “Sponsorware” perks (priority triage, roadmap votes)
+
+---
+
+### Next Steps
+1. **Sign‑off on PRD** → collect feedback & freeze MVP scope.  
+2. Kick‑off **0.1 Prototype sprint** with core contributors.  
+3. Set up GitHub org `butter-table` and initial repo scaffolding.
+
+*Prepared by:*  
+*ChatGPT Product/Engineering Assistant*
