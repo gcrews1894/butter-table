@@ -1,0 +1,92 @@
+---
+description: 
+globs: 
+alwaysApply: false
+---
+Server-Side Operations
+Add support for server-side pagination, sorting, and filtering
+Implement data fetching hooks with caching
+Add support for optimistic updates
+
+Row Grouping & Tree Data
+Add support for hierarchical data structures
+Implement expand/collapse functionality
+Add aggregation capabilities for grouped rows
+
+Column Features
+Add column resizing with persistence
+Implement column freezing (left/right)
+Add column grouping
+Add column aggregation (sum, avg, count, etc.)
+
+Data Operations
+Add row editing capabilities
+Implement bulk operations
+Add data validation
+Add data transformation hooks
+
+State Management
+Add undo/redo functionality
+Implement state versioning
+Add state migration support
+Add state synchronization between multiple tables
+
+Performance Optimizations
+Add data virtualization for large datasets
+Implement memoization for expensive computations
+Add batch updates for multiple state changes
+Implement efficient diffing algorithms
+
+Accessibility Features
+Add keyboard navigation
+Implement ARIA attributes
+Add screen reader support
+Add focus management
+
+Internationalization
+Add localization support
+Implement RTL support
+Add number/date formatting
+Add currency formatting
+
+Export/Import
+Add CSV export
+Add Excel export
+Add JSON import/export
+Add state import/export
+
+Advanced Filtering
+Add complex filter combinations
+Implement custom filter operators
+Add filter presets
+Add filter persistence
+
+Selection & Clipboard
+Add multi-select with keyboard
+Implement copy/paste functionality
+Add drag and drop selection
+Add selection persistence
+
+Customization Hooks
+Add plugin system
+Implement custom cell renderers
+Add custom header renderers
+Add custom footer renderers
+
+Error Handling
+Add error boundaries
+Implement error recovery
+Add error reporting
+Add validation feedback
+
+Testing Utilities
+Add test helpers
+Implement mock data generators
+Add performance testing tools
+Add accessibility testing tools
+
+Documentation
+Add JSDoc comments
+Implement API documentation
+Add usage examples
+Add migration guides
