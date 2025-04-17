@@ -10,11 +10,11 @@ export interface VirtualOptions {
    * The estimated size of each item in pixels
    * @default 50
    */
-  estimateSize?: number;
+  estimateSize?: number | ((index: number) => number);
   /**
    * The size of the scrollable container
    */
-  containerSize: number;
+  containerSize?: number;
   /**
    * The total number of items to virtualize
    */
@@ -22,20 +22,15 @@ export interface VirtualOptions {
   /**
    * The current scroll offset
    */
-  scrollOffset: number;
+  scrollOffset?: number;
   /**
    * Whether to use dynamic sizing
    * @default false
    */
   dynamic?: boolean;
-}
-
-export interface VirtualInstance {
-  virtualItems: VirtualItem[];
-  totalSize: number;
-  scrollToIndex: (index: number, options?: { align?: 'start' | 'center' | 'end' }) => void;
-  scrollToOffset: (offset: number, options?: { align?: 'start' | 'center' | 'end' }) => void;
-  measure: () => void;
+  horizontal?: boolean;
+  onScroll?: (offset: number) => void;
+  onMeasure?: (sizes: number[]) => void;
 }
 
 export interface VirtualItem {
@@ -44,4 +39,31 @@ export interface VirtualItem {
   end: number;
   size: number;
   key: string;
+  measureRef?: (element: HTMLElement | null) => void;
+}
+
+export interface VirtualInstance {
+  virtualItems: VirtualItem[];
+  totalSize: number;
+  scrollToIndex: (index: number, options?: { align?: 'start' | 'center' | 'end' }) => void;
+  scrollToOffset: (offset: number, options?: { align?: 'start' | 'center' | 'end' }) => void;
+  measure: () => void;
+  getVirtualizer: () => Virtualizer<HTMLElement, HTMLElement> | null;
+}
+
+export interface TableVirtualOptions extends VirtualOptions {
+  rowCount: number;
+  columnCount: number;
+  rowHeight?: number | ((index: number) => number);
+  columnWidth?: number | ((index: number) => number);
+  enableColumnVirtualization?: boolean;
+  enableRowVirtualization?: boolean;
+}
+
+export interface TableVirtualInstance extends VirtualInstance {
+  columnVirtualItems: VirtualItem[];
+  rowVirtualItems: VirtualItem[];
+  totalColumnSize: number;
+  totalRowSize: number;
+  scrollToCell: (rowIndex: number, columnIndex: number) => void;
 } 
